@@ -1,6 +1,6 @@
 name: Multiple Jobs
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
     build_job_1:
@@ -30,9 +30,15 @@ jobs:
         
             - name: Test File Exists
               run: grep -i "dragon" dragon.txt
+            
+            - name: sleep for 30 sec
+              run: sleep 30s
 
     deploy_job_3:
         needs: [test_job_1]
+        concurrency: 
+            group: deploy_job
+            cancel-in-progress: true
         runs-on: ubuntu-latest
         steps:
             - name: Download a Build Artifact
